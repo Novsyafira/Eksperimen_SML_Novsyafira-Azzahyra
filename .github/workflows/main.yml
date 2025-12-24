@@ -1,0 +1,38 @@
+name: Automate Preprocessing
+
+on:
+  push:
+    paths:
+      - 'preprocessing/automate_Novsyafira-Azzahyra.py'
+      - 'diabetes_raw/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Preprocessing Script
+      run: |
+        python preprocessing/automate_Novsyafira-Azzahyra.py
+
+    - name: Commit and Push Processed Data
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add preprocessing/diabetes_preprocessing/
+        git commit -m "Auto-update processed data" || echo "No changes to commit"
+        git push
+        
